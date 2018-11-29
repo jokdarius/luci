@@ -109,7 +109,7 @@
 
 			for i, r in ipairs(childs) do
 				local nnode = node.nodes[r]
-				local title = pcdata(striptags(translate(nnode.title)))
+				local title = striptags(translate(nnode.title))
 
 				write('<li><a data-title="%s" href="%s">%s</a></li>' %{
 					title,
@@ -132,7 +132,7 @@
 				local grandchildren = disp.node_childs(nnode)
 
 				if #grandchildren > 0 then
-					local title = pcdata(striptags(translate(nnode.title)))
+					local title = striptags(translate(nnode.title))
 
 					write('<li class="slide"><a class="menu" data-title="%s" href="#">%s</a>' %{
 						title,
@@ -142,7 +142,7 @@
 					render_submenu(category .. "/" .. r, nnode)
 					write('</li>')
 				else
-					local title = pcdata(striptags(translate(nnode.title)))
+					local title = striptags(translate(nnode.title))
 
 					write('<li><a data-title="%s" href="%s">%s</a></li>' %{
 						title,
@@ -207,16 +207,18 @@
 	<% if css then %>
 		<style title="text/css"><%= css %></style>
 	<% end -%>
+	<script src="<%=url('admin/translations', luci.i18n.context.lang)%><%# ?v=PKG_VERSION %>"></script>
 	<script src="<%=resource%>/cbi.js"></script>
 	<script src="<%=resource%>/xhr.js"></script>
 </head>
-<body class="lang_<%=luci.i18n.context.lang%> <%- if node then %><%= striptags( node.title ) %><%- end %> <% if luci.dispatcher.context.authsession then %>logged-in<% end %>">
+<body class="lang_<%=luci.i18n.context.lang%> <% if node then %><%= striptags( node.title ) %><% end %> <% if luci.dispatcher.context.authsession then %>logged-in<% end %>" data-page="<%= table.concat(disp.context.requestpath, "-") %>">
 <header>
 	<div class="fill">
 		<div class="container">
 			<span class="showSide"></span>
+			<img src="<%=media%>/brand.png"/>
 			<a class="brand" href="#"><%=boardinfo.hostname or "?"%></a>
-			<div class="pull-right">
+			<div class="status">
 				<% render_changes() %>
 				<span id="xhr_poll_status" style="display:none" onclick="XHR.running() ? XHR.halt() : XHR.run()">
 					<span class="label success" id="xhr_poll_status_on"><span class="mobile-hide"><%:Auto Refresh%></span> <%:on%></span>
@@ -239,7 +241,9 @@
 					<div class="alert-message warning">
 						<h4><%:No password set!%></h4>
 						<p><%:There is no password set on this router. Please configure a root password to protect the web interface and enable SSH.%></p>
-						<div class="right"><a class="btn" href="<%=url("admin/system/admin")%>"><%:Go to password configuration...%></a></div>
+						<% if disp.lookup("admin/system/admin") then %>
+							<div class="right"><a class="btn" href="<%=url("admin/system/admin")%>"><%:Go to password configuration...%></a></div>
+						<% end %>
 					</div>
 				<%- end -%>
 

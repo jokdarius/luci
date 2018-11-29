@@ -11,6 +11,9 @@ XHR.poll(5, '<%=luci.dispatcher.build_url("admin/services/aria2/status")%>', nul
 				if (data.webui) {
 					links += '<input class="cbi-button mar-10" type="button" value="<%:Open WebUI-Aria2%>" onclick="openWebUI(\'webui-aria2\');" />';
 				}
+				if (data.ariang) {
+					links += '<input class="cbi-button mar-10" type="button" value="<%:Open AriaNg%>" onclick="openWebUI(\'ariang\');" />';
+				}
 				tb.innerHTML = links;
 			} else {
 				tb.innerHTML = '<em><%:The Aria2 service is not running.%></em>';
@@ -24,7 +27,7 @@ function randomString(len) {
 	var $chars = 'abcdefghijklmnopqrstuvwxyz1234567890';
 	var maxPos = $chars.length;
 	var pwd = '';
-	for (i = 0; i < len; i++) {
+	for (var i = 0; i < len; i++) {
 		pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
 	}
 	return pwd;
@@ -41,6 +44,7 @@ function showRPCURL() {
 	var newTextNode = document.getElementById("aria2rpcpath");
 	var auth_method = document.getElementById("cbid.aria2.main.rpc_auth_method");
 	var auth_port = document.getElementById("cbid.aria2.main.rpc_listen_port");
+	var auth_port_value;
 	if (auth_port.value == "") {
 		auth_port_value = "6800"
 	} else {
